@@ -13,14 +13,16 @@ import com.yandemelo.TREnergia.entities.Usuario;
 import com.yandemelo.TREnergia.exceptions.ResourceNotFoundException;
 import com.yandemelo.TREnergia.repositories.UsuarioRepository;
 
+import jakarta.persistence.EntityNotFoundException;
+
 @Service
 public class UsuarioService {
-    
+
     @Autowired
     private UsuarioRepository usuarioRepository;
 
     @Transactional
-    public UsuarioDTO cadastrar(UsuarioDTO dto){
+    public UsuarioDTO cadastrar(UsuarioDTO dto) {
         Usuario usuario = new Usuario();
         copiarDtoParaEntity(dto, usuario);
         usuario = usuarioRepository.save(usuario);
@@ -28,13 +30,14 @@ public class UsuarioService {
     }
 
     @Transactional(readOnly = true)
-    public UsuarioDTO consultarPorId(UUID id){
-        Usuario usuario = usuarioRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado."));
+    public UsuarioDTO consultarPorId(UUID id) {
+        Usuario usuario = usuarioRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado."));
         return new UsuarioDTO(usuario);
     }
-    
+
     @Transactional(readOnly = true)
-    public UsuarioDTO consultarPorCpf(String cpf){
+    public UsuarioDTO consultarPorCpf(String cpf) {
         Usuario usuario = usuarioRepository.findByCpf(cpf);
         if (usuario == null) {
             throw new ResourceNotFoundException("Nenhum usuário encontrado com o cpf: " + cpf);
@@ -43,12 +46,24 @@ public class UsuarioService {
     }
 
     @Transactional(readOnly = true)
-    public List<UsuarioDTO> listarUsuarios(){
+    public List<UsuarioDTO> listarUsuarios() {
         List<Usuario> usuarios = usuarioRepository.findAll();
         return usuarios.stream().map(x -> new UsuarioDTO(x)).collect(Collectors.toList());
     }
 
-    private void copiarDtoParaEntity(UsuarioDTO dto, Usuario usuario){
+    @Transactional()
+    public UsuarioDTO atualizarUsuario(UUID id, UsuarioDTO dto) {
+        try {
+            Usuario usuario = usuarioRepository.getReferenceById(id);
+            copiarDtoParaEntity(dto, usuario);
+            usuario = usuarioRepository.save(usuario);
+            return new UsuarioDTO(usuario);
+        } catch (EntityNotFoundException e) {
+            throw new ResourceNotFoundException("Recurso não encontrado.");
+        }
+    }
+
+    private void copiarDtoParaEntity(UsuarioDTO dto, Usuario usuario) {
         usuario.setNome(dto.getNome());
         usuario.setCpf(dto.getCpf());
         usuario.setIdade(dto.getIdade());

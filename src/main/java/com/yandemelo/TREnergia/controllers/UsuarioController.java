@@ -35,4 +35,9 @@ public class UsuarioController {
         return ResponseEntity.ok(dto);
     }
 
+    @GetMapping("/consultarCpf/{cpf}")
+    public ResponseEntity<UsuarioDTO> consultarPorId(@PathVariable String cpf){
+        UsuarioDTO dto = usuarioService.consultarPorCpf(cpf);
+        return ResponseEntity.ok(dto);
+    }
 }

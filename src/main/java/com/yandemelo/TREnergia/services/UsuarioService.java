@@ -31,6 +31,15 @@ public class UsuarioService {
         return new UsuarioDTO(usuario);
     }
 
+    @Transactional(readOnly = true)
+    public UsuarioDTO consultarPorCpf(String cpf){
+        Usuario usuario = usuarioRepository.findByCpf(cpf);
+        if (usuario == null) {
+            throw new ResourceNotFoundException("Nenhum usuário encontrado com o cpf: " + cpf);
+        }
+        return new UsuarioDTO(usuario);
+    }
+
     private void copiarDtoParaEntity(UsuarioDTO dto, Usuario usuario){
         usuario.setNome(dto.getNome());
         usuario.setCpf(dto.getCpf());

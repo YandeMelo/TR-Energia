@@ -50,7 +50,7 @@ public class UsuarioService {
         List<Usuario> usuarios = usuarioRepository.findAll();
         return usuarios.stream().map(x -> new UsuarioDTO(x)).collect(Collectors.toList());
     }
-
+    
     @Transactional()
     public UsuarioDTO atualizarUsuario(UUID id, UsuarioDTO dto) {
         try {
@@ -61,6 +61,14 @@ public class UsuarioService {
         } catch (EntityNotFoundException e) {
             throw new ResourceNotFoundException("Recurso não encontrado.");
         }
+    }
+
+    @Transactional()
+    public void excluirUsuario(UUID id) {
+        if (!usuarioRepository.existsById(id)) {
+            throw new ResourceNotFoundException("Recurso não encontrado.");
+        }
+        usuarioRepository.deleteById(id);
     }
 
     private void copiarDtoParaEntity(UsuarioDTO dto, Usuario usuario) {

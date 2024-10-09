@@ -1,6 +1,8 @@
 package com.yandemelo.TREnergia.services;
 
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,7 +32,7 @@ public class UsuarioService {
         Usuario usuario = usuarioRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado."));
         return new UsuarioDTO(usuario);
     }
-
+    
     @Transactional(readOnly = true)
     public UsuarioDTO consultarPorCpf(String cpf){
         Usuario usuario = usuarioRepository.findByCpf(cpf);
@@ -38,6 +40,12 @@ public class UsuarioService {
             throw new ResourceNotFoundException("Nenhum usuário encontrado com o cpf: " + cpf);
         }
         return new UsuarioDTO(usuario);
+    }
+
+    @Transactional(readOnly = true)
+    public List<UsuarioDTO> listarUsuarios(){
+        List<Usuario> usuarios = usuarioRepository.findAll();
+        return usuarios.stream().map(x -> new UsuarioDTO(x)).collect(Collectors.toList());
     }
 
     private void copiarDtoParaEntity(UsuarioDTO dto, Usuario usuario){

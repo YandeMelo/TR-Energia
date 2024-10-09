@@ -1,5 +1,6 @@
 package com.yandemelo.TREnergia.controllers;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,5 +40,11 @@ public class UsuarioController {
     public ResponseEntity<UsuarioDTO> consultarPorId(@PathVariable String cpf){
         UsuarioDTO dto = usuarioService.consultarPorCpf(cpf);
         return ResponseEntity.ok(dto);
+    }
+
+    @GetMapping("/consultarUsuarios")
+    public ResponseEntity<List<UsuarioDTO>> consultarUsuarios(){
+        List<UsuarioDTO> usuarios = usuarioService.listarUsuarios();
+        return ResponseEntity.ok(usuarios);
     }
 }

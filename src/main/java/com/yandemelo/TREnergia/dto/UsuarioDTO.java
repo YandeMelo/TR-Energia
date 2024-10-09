@@ -6,6 +6,7 @@ import org.hibernate.validator.constraints.br.CPF;
 
 import com.yandemelo.TREnergia.entities.Usuario;
 
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -24,9 +25,10 @@ public class UsuarioDTO {
     private String nome;
     
     @CPF(message = "Formato inválido ou Cpf não existe!")
-    @NotBlank
+    @NotBlank(message = "O cpf não pode estar vazio!")
     private String cpf;
     
+    @Min(value = 18, message = "Usuário deve ser maior de idade!")
     @NotNull(message = "A idade não pode estar vazia!")
     private int idade;
     
